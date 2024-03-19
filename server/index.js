@@ -6,13 +6,14 @@ const mysql = require('mysql');
 const cors=require('cors')
 const app = express();
 const port = process.env.PORT || 3001;
-
+require('dotenv').config()
 // MySQL connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Sk@12345',
-  database: 'Codebase'
+  host:process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database:process.env.DATABASE,
+  port:process.env.DB_PORT
 });
 
 db.connect((err) => {
@@ -26,6 +27,34 @@ db.connect((err) => {
 app.use(bodyParser.json());
 app.use(cors())
 // Routes
+app.get('/',(req,res)=>{
+  res.send("Welcome..")
+})
+// app.get('/create-table', (req, res) => {
+//   const createTableQuery = `
+//     CREATE TABLE IF NOT EXISTS snippets (
+//       id INT AUTO_INCREMENT PRIMARY KEY,
+//       username VARCHAR(255) NOT NULL,
+//       language VARCHAR(50) NOT NULL,
+//       stdin JSON,
+//       code TEXT NOT NULL,
+//       timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+//     )
+//   `;
+
+//   // Execute query to create table
+//   db.query(createTableQuery, (error, results, fields) => {
+//     if (error) {
+//       console.error('Error creating snippets table:', error);
+//       return res.status(500).send('Internal Server Error');
+//     }
+//     console.log('Snippets table created successfully');
+//     res.send('Snippets table created successfully');
+//   });
+// });
+
+
+
 app.post('/submit', (req, res) => {
   const { username, language, stdin, code } = req.body;
   const snippet = { username, language, stdin: JSON.stringify(stdin), code }; // Convert stdin to JSON string
